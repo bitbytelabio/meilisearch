@@ -49,6 +49,11 @@ pub async fn get_metrics(
         }
     }
 
+    crate::metrics::MEILISEARCH_LAST_UPDATE
+        .set(response.last_update.unwrap().unix_timestamp());
+    crate::metrics::MEILISEARCH_IS_INDEXING
+        .set(index_scheduler.is_task_processing().unwrap() as i64);
+
     let encoder = TextEncoder::new();
     let mut buffer = vec![];
     encoder.encode(&prometheus::gather(), &mut buffer).expect("Failed to encode metrics");
